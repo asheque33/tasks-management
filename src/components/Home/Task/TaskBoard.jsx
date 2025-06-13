@@ -3,6 +3,7 @@ import SearchTask from './SearchTask';
 import TaskActions from './TaskActions';
 import TasksList from './TasksList';
 import AddTaskModal from './AddTaskModal';
+import NoTaskFound from './NoTaskFound';
 
 const priority = {
   high: 'High',
@@ -69,6 +70,12 @@ const TaskBoard = () => {
     setTaskToUpdate(null);
     setShowModal(false);
   };
+  const handleSearch = (searchTerm) => {
+    const filtered = tasks.filter((task) =>
+      task.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setTasks([...filtered]);
+  };
   return (
     <section className='mb-20' id='tasks'>
       {showModal && (
@@ -79,19 +86,23 @@ const TaskBoard = () => {
         />
       )}
       <div className='container'>
-        <SearchTask />
+        <SearchTask onSearch={handleSearch} />
         <div className='rounded-xl border border-[rgba(206,206,206,0.12)] bg-[#1D212B] px-6 py-8 md:px-9 md:py-16'>
           <TaskActions
             onAddTask={() => setShowModal(true)}
             onDeleteAllClick={handleDeleteAllTasks}
           />
           <div className='overflow-auto'>
-            <TasksList
-              tasks={tasks}
-              onFav={handleFavorite}
-              onEdit={handleEditTask}
-              onDelete={handleDeleteTask}
-            />
+            {tasks.length > 0 ? (
+              <TasksList
+                tasks={tasks}
+                onFav={handleFavorite}
+                onEdit={handleEditTask}
+                onDelete={handleDeleteTask}
+              />
+            ) : (
+              <NoTaskFound />
+            )}
           </div>
         </div>
       </div>
